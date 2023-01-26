@@ -1,7 +1,7 @@
 /* queue.c --- 
  * 
  * 
- * Author: Eren Berke Saglam
+ * author: Eren Berke Saglam
  * Created: Sun Jan 22 19:54:40 2023 (-0500)
  * Version: 
  * 
@@ -20,8 +20,6 @@ typedef struct data_node {
 	void* info;
 
 } data_node_t;
-
-typedef void queue_t;
 	
 typedef struct queue {
 	data_node_t* front; //data_node ->data_node_t
@@ -31,17 +29,17 @@ typedef struct queue {
 
 
 queue_t* qopen(void) {
-	queue_t* qp;
+	queue_mod_t* ip;
 	
-	if ( ! ( qp = (queue_t*) malloc(sizeof(queue_mod_t)))) {
+	if ( ! ( ip = (queue_mod_t*) malloc(sizeof(queue_mod_t)))) {
     printf("[Error: malloc failed allocating queue]\n");
     return NULL;
   }
 
-	qp->front = NULL;
-	qp->back = NULL;
+	ip->front = NULL;
+	ip->back = NULL;
 
-	return qp;
+	return (queue_t*)ip;
 }
 
 static data_node_t* make_data_node(void* info) {
@@ -58,18 +56,36 @@ static data_node_t* make_data_node(void* info) {
 	return dn;
 }
 
+static void printQueue(queue_t* qp)
+{
+	queue_mod_t* ip = (queue_mod_t*)(qp);
+
+	printf("Queue: {Front: %p, Back: %p}\n", ip->front, ip->back);
+}
 
 int32_t qput(queue_t *qp, void *elementp) {
-
-	(queue_mod_t*) qp;
+	
+	queue_mod_t* ip = (queue_mod_t*)(qp);
 	
 	data_node_t* dn = make_data_node(elementp);
 
 	if(dn != NULL)
 		{
-			qp->back->next = dn;
-			qp->back = dn;
+						
+			if (ip->front == NULL)
+				{
+					ip->front = dn;
+					ip->back = dn;
+				}
+
 			
+			if(ip->back != dn)
+				{
+					ip->back->next = dn;
+				}
+
+			ip->back = dn;
+			 
 			return 0;
 		}
 	else
@@ -78,23 +94,38 @@ int32_t qput(queue_t *qp, void *elementp) {
 		}
 }
 
-void* qget(queue_t *qp) {
+static data_node_t* qgetNode(queue_t *qp) {
 
-	qp = (queue_mod_t*) qp;
+	queue_mod_t* ip = (queue_mod_t*) (qp);
 
-	data_node_t* toReturn = qp->front;
-	qp->front = toReturn->next;
+	data_node_t* toReturn = ip->front;
+	ip->front = toReturn->next;
 
 	toReturn->next = NULL;
 	
 	return toReturn;
 }
 
+
+void* qget(queue_t *qp) {
+
+	/*queue_mod_t* ip = (queue_mod_t*) (&qp);*/
+
+	data_node_t* toReturn = qgetNode(qp);
+	toReturn->next = NULL;
+	
+	void* stuffp = toReturn->info; 
+	free(toReturn);
+	
+	return stuffp;
+}
+
+
 void qclose(queue_t *qp) {
 
-	qp = (queue_mod_t*) qp; 
+	/*queue_mod_t* ip = (queue_mod_t*) (&qp);*/ 
 
-  for(data_node_t* curr_dat = qget(qp); curr_dat != NULL; curr_dat = qget(qp))
+  for(data_node_t* curr_dat = qgetNode(qp); curr_dat != NULL; curr_dat = qgetNode(qp))
 		{
 			free(curr_dat);
 		}
@@ -102,10 +133,9 @@ void qclose(queue_t *qp) {
 }
 
 void qapply(queue_t *qp, void (*fn)(void* elementp)) {
-	qp = (queue_mod_t*) qp;
+	queue_mod_t* ip = (queue_mod_t*) (qp);
 
-
-	for (data_node_t* curr_node = qp->front; curr_node != NULL; curr_node=curr_node->next){
+	for (data_node_t* curr_node = ip->front; curr_node != NULL; curr_node=curr_node->next){
     fn(curr_node->info);
   }
 
@@ -116,9 +146,9 @@ void* qsearch(queue_t *qp,
 							bool (*searchfn)(void* elementp,const void* keyp),
 							const void* skeyp){
 
-	qp = (queue_mod_t*) qp;
+	queue_mod_t* ip = (queue_mod_t*) (qp);
 	
-	for (data_node_t* curr_node = qp->front; curr_node != NULL; curr_node=curr_node->next){
+	for (data_node_t* curr_node = ip->front; curr_node != NULL; curr_node=curr_node->next){
 
 		if(searchfn(curr_node->info, skeyp)){
 				return curr_node->info;
@@ -140,17 +170,17 @@ void* qremove(queue_t *qp,
 							bool (*searchfn)(void* elementp,const void* keyp),
 							const void* skeyp){
 
-	qp = (queue_mod_t*) qp;
+	queue_mod_t* ip = (queue_mod_t*) (qp);
 	
-	if(qp->front == NULL)
+	if(ip->front == NULL)
 		{
 			return NULL;
 		}
-	if (searchfn(qp->front->info, skeyp))
+	if (searchfn(ip->front->info, skeyp))
 		{
-			data_node_t* foundNode = qp->front;
+			data_node_t* foundNode = ip->front;
 			
-			qp->front = qp->front->next;
+			ip->front = ip->front->next;
 			foundNode->next = NULL;
 			void* finfo = foundNode->info;
 			free(foundNode);
@@ -159,7 +189,7 @@ void* qremove(queue_t *qp,
 
 		}
 			
-	for (data_node_t* curr_node = qp->front; curr_node->next != NULL; curr_node=curr_node->next){
+	for (data_node_t* curr_node = ip->front; curr_node->next != NULL; curr_node=curr_node->next){
 
     if(searchfn(curr_node->next->info, skeyp)){
 
@@ -180,11 +210,11 @@ void* qremove(queue_t *qp,
 
 void qconcat(queue_t *q1p, queue_t* q2p) {
 
-	q1p = (queue_mod_t*) q1p;
-	q2p = (queue_mod_t*) q2p;
+	queue_mod_t* i1 = (queue_mod_t*) (q1p);
+	queue_mod_t* i2 = (queue_mod_t*) (q2p);
 	
-	q1p->back->next = q2p->front;
-	q1p->back = q2p->back;
+	i1->back->next = i2->front;
+	i1->back = i2->back;
 
 	free(q2p);
 	

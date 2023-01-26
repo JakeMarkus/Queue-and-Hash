@@ -1,7 +1,7 @@
 CFLAGS=-Wall -pedantic -std=c11 -I. -g
 
-queueComp: queue.c
-	gcc $(CFLAGS) queue.c -o queueComp
-
 %.o: %.c %.h
 	gcc $(CFLAGS) -c $<
+
+test1: test1.o queue.o
+	gcc $(CFLAGS) test1.o queue.o -o test1
