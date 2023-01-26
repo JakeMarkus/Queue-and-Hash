@@ -43,6 +43,11 @@ static void printTestStruct(TestStruct_t* ts)
 	printf("Test Struct: {x: %i, y: %i, c: %f}\n", ts->x, ts->y, ts->c);
 }
 
+static void doubleYear(TestStruct_t* ts)
+{
+	ts->y = 2* ts->y;
+}
+
 int main()
 {
 
@@ -71,11 +76,18 @@ int main()
 	printTestStruct(popped);
 	free(popped);
 	
-	printf("Printing Queue: \n");
+	printf("Printing Shorter Queue: \n");
 	qapply(myQueue, printTestStruct);
+
+	printf("Doubling Years: \n");
+	qapply(myQueue, doubleYear);
+	qapply(myQueue, printTestStruct);
+	
 	printf("Closing Queue!\n");
 
 	qclose(myQueue);
-	return 0;
-	
+
+	free(e2);
+	free(e3);
+	return 0;	
 }
