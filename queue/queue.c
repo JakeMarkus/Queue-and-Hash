@@ -56,12 +56,7 @@ static data_node_t* make_data_node(void* info) {
 	return dn;
 }
 
-static void printQueue(queue_t* qp)
-{
-	queue_mod_t* ip = (queue_mod_t*)(qp);
 
-	printf("Queue: {Front: %p, Back: %p}\n", ip->front, ip->back);
-}
 
 int32_t qput(queue_t *qp, void *elementp) {
 	
@@ -217,12 +212,27 @@ void qconcat(queue_t *q1p, queue_t* q2p) {
 
 	queue_mod_t* i1 = (queue_mod_t*) (q1p);
 	queue_mod_t* i2 = (queue_mod_t*) (q2p);
+	if(i2->front==NULL){
+		free(q2p);
+		return;
+	}
+	else{
+		if(i1->front==NULL){
+			i1->front = i2->front;
+			i1->back=i2->back;
+			free(q2p);
+			return;
+		}
+		else{
+ 
+		
 	
 	i1->back->next = i2->front;
 	i1->back = i2->back;
 
 	free(q2p);
-	
+		}
+	}	
 }
 	
 
