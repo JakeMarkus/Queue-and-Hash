@@ -98,7 +98,13 @@ static data_node_t* qgetNode(queue_t *qp) {
 
 	queue_mod_t* ip = (queue_mod_t*) (qp);
 
+	
 	data_node_t* toReturn = ip->front;
+	if (toReturn == NULL)
+		{
+			return NULL;
+		}
+	
 	ip->front = toReturn->next;
 
 	toReturn->next = NULL;
@@ -138,7 +144,6 @@ void qapply(queue_t *qp, void (*fn)(void* elementp)) {
 	for (data_node_t* curr_node = ip->front; curr_node != NULL; curr_node=curr_node->next){
     fn(curr_node->info);
   }
-
 }
 
 

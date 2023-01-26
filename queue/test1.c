@@ -65,15 +65,17 @@ int main()
 	qapply(myQueue, printTestStruct);
 
 	printf("Popping from Queue: \n");
-	printTestStruct(qget(myQueue));
 
+	TestStruct_t* popped = qget(myQueue);
+	
+	printTestStruct(popped);
+	free(popped);
+	
 	printf("Printing Queue: \n");
 	qapply(myQueue, printTestStruct);
+	printf("Closing Queue!\n");
 
-
-	printf("Closing Queue!");
 	qclose(myQueue);
-	
 	return 0;
 	
 }
