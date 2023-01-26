@@ -5,3 +5,6 @@ CFLAGS=-Wall -pedantic -std=c11 -I. -g
 
 test1: test1.o queue.o
 	gcc $(CFLAGS) test1.o queue.o -o test1
+
+test3: test3.o queue.o
+	gcc $(CFLAGS) test3.o queue.o -o test3
