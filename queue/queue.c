@@ -124,11 +124,12 @@ void* qget(queue_t *qp) {
 
 void qclose(queue_t *qp) {
 
-	/*queue_mod_t* ip = (queue_mod_t*) (&qp);*/ 
-
-  for(data_node_t* curr_dat = qgetNode(qp); curr_dat != NULL; curr_dat = qgetNode(qp))
+	/*queue_mod_t* ip = (queue_mod_t*) (&qp);*/
+	//	queue_mod_t* qp1 = (queue_mod_t*)qp;
+	
+  for(data_node_t* curr_dat = qgetNode(qp); curr_dat!=NULL; curr_dat=qgetNode(qp))
 		{
-			free(curr_dat);
+					free(curr_dat);
 		}
 	free(qp);
 }
