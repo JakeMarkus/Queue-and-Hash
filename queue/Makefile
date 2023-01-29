@@ -1,7 +1,7 @@
 CFLAGS=-Wall -pedantic -std=c11 -I. -g
 VALGRIND=valgrind --leak-check=full
 
-all: test1 test3 test4
+all: test1 test2 test3 test4
 
 %.o: %.c %.h
 	gcc $(CFLAGS) -c $<
@@ -29,3 +29,6 @@ valgrind3: test3
 
 valgrind4: test4
 	$(VALGRIND) test4
+
+clean:
+	rm -f *.o test1 test2 test3 test4
