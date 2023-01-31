@@ -5,7 +5,8 @@
 #include <stdint.h>
 #include "queue.h"
 #include "hash.h"
-
+#include <stdio.h>
+#include <stdlib.h>
 /* 
  * SuperFastHash() -- produces a number between 0 and the tablesize-1.
  * 
@@ -102,7 +103,7 @@ void hclose(hashtable_t *htp) {
 
 }
 
-int32_t hput(hashtable_t* htp. void* ep, const char *key, int keylen) {
+int32_t hput(hashtable_t* htp, void* ep, const char *key, int keylen) {
 
 	hash_mod_t* ip = (hash_mod_t*) htp;
 
@@ -127,14 +128,13 @@ void happly(hashtable_t* htp, void (*fn)(void* ep)) {
 
 }
 
-	void *hsearch(hashtable_t *htp,                                                                              
-        bool (*searchfn)(void* elementp, const void* searchkeyp),
-								const char *key, int32_t keylen){
+	void *hsearch(hashtable_t *htp, bool (*searchfn)(void* elementp, const void* searchkeyp),const char *key, int32_t keylen){
+		
 		hash_mod_t* ip = (hash_mod_t*) htp;
-  uint32_t queue_index = SuperFastHash(key, keylen, ip->tablesize);
+		uint32_t queue_index = SuperFastHash(key, keylen, ip->tablesize);
 		
 		queue_t* currq = (ip->table_p)[queue_index];
-		void* result =qsearch(currq, searchfn, searchkeyp);
+		void* result =qsearch(currq, searchfn, key);
 		return result;
 	}
 
@@ -143,7 +143,7 @@ void *hremove(hashtable_t *htp,
 	hash_mod_t* ip = (hash_mod_t*) htp;
 	uint32_t queue_index = SuperFastHash(key, keylen, ip->tablesize); 
 	queue_t* currq = (ip->table_p)[queue_index];
-	void* result =qremove(currq, searchfn, searchkeyp);
+	void* result =qremove(currq, searchfn, key);
 	return result;
 }
 
