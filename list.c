@@ -44,7 +44,7 @@ car_t* make_car(char* platep, double price, int year) {
 	cp->next = NULL;
 	strcpy(cp->plate,platep);
 	cp->price=price;
-x	cp->year=year;
+  cp->year=year;
 
 	return cp;
 }
