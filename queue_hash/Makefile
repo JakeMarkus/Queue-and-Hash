@@ -1,7 +1,7 @@
 CFLAGS=-Wall -pedantic -std=c11 -I. -g
 VALGRIND=valgrind --leak-check=full
 
-all: test1 test2 test3 test4 test1hash test2hash
+all: test1 test2 test3 test4 test1hash test2hash test3hash
 
 %.o:	%.c
 			gcc $(CFLAGS) -c $<
@@ -24,23 +24,11 @@ test1hash:	test1hash.o hash.o queue.o
 test2hash: test2hash.o hash.o queue.o
 				gcc $(CFLAGS) queue.o test2hash.o hash.o -o test2hash
 
-valgrind1:	test1
-				$(VALGRIND) test1
+test3hash: test3hash.o hash.o queue.o
+				gcc $(CFLAGS) queue.o test3hash.o hash.o -o test3hash
 
-valgrind2: test2
-				$(VALGRIND) test2
-
-valgrind3: test3
-				$(VALGRIND) test3
-
-valgrind4: test4
-				$(VALGRIND) test4
-
-valgrindtest1hash: test1hash
-				$(VALGRIND) test1hash
-
-valgrindtest2hash: test2hash
-				$(VALGRIND) test2hash
+%.v: %
+				$(VALGRIND) $<
 
 clean:
-	rm -f *.o test1 test2 test3 test4 test1hash test2hash
+	rm -f *.o test1 test2 test3 test4 test1hash test2hash test3hash
